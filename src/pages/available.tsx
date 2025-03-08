@@ -30,28 +30,34 @@ interface Recipe {
 const Available = () => {
     const [data, setData] = useState<Data | null>(null)
     const [caloriesFilter, setCaloriesFilter] = useState<number>(100000)
+    const [searchQuery, setSearchQuery] = useState<string>("")
     useEffect(() => {
-        fetch(`https://dummyjson.com/recipes/search?q=&?limit=10`)
+        fetch(`https://dummyjson.com/recipes/search?q=${searchQuery}`)
             .then(res => res.json())
             .then(data => setData(data))
-    }, [])
+    }, [searchQuery])
     console.log(data)
 
     const filteredData = data?.recipes.filter(recipe => recipe.caloriesPerServing <= caloriesFilter)
 
+    const debouncedSetSearchQuery = debounce(setSearchQuery, 500);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        debouncedSetSearchQuery(e.target.value);
+    }
+
     return (
         <div>
-            {/* nav */}
-            <nav className="flex justify-between items-center py-4">
-                <div className="flex items-center">
-                    <img src="/assets/logo.svg" alt="logo" className="h-8" />
-                    <h1 className="text-2xl font-semibold ml-2">Food Order</h1>
+            {/* search bar */}
+            <section className="search-bar py-16">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-4xl font-semibold text-center">Search for food</h2>
+                    <p className="text-lg text-center mt-4">Enter a name of a dish you are looking for</p>
+                    <div className="search-bar-form flex justify-center items-center mt-4">
+                        <input type="text" onChange={handleSearch} className="px-4 py-2 rounded-lg" placeholder="Search" />
+                    </div>
                 </div>
-                <div>
-                    <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg">Login</button>
-                </div>
-            </nav>
-
+            </section>
             {/* popular */}
             <section className="popular py-16">
                 <div className="container mx-auto px-4">
@@ -90,26 +96,21 @@ const Available = () => {
                     </div>
                 </div>
             </section>
-            {/* footer */}
-            <footer className="py-8">
-                <div className="container mx-auto px-4">
-                    <div className="footer-inner flex justify-between items-center">
-                        <div>
-                            <h1 className="text-2xl font-semibold">Food Order</h1>
-                        </div>
-                        <div>
-                            <ul className="footer-menu flex space-x-4">
-                                <li><a href="#">Privacy</a></li>
-                                <li><a href="#">Terms</a></li>
-                                <li><a href="#">Contact</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     )
 
 }
+
+const debounce = (fn: Function, delay: number) => {
+    let timer: any;
+    return (...args: any[]) => {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+            fn(...args);
+        }, delay);
+    };
+};
 
 export default Available

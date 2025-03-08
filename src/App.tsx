@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import { Route, Routes } from 'react-router'
 import Landing from './pages/landing'
 import FoodPreview from './pages/food-preview'
@@ -8,6 +7,8 @@ import IndexLayout from './layouts/index-layout'
 import Login from './pages/login'
 import Register from './pages/register'
 import Cart from './pages/cart'
+import Profile from './pages/profile'
+import Checkout from './pages/checkout'
 
 // console.log(data)
 function App() {
@@ -22,6 +23,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Route>
     </Routes>
   )

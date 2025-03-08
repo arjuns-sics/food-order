@@ -18,11 +18,24 @@ const Register = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        fetch('/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: email,
+                email: email,
+                password: password,
+                address: "123 Main St, Anytown, USA",
+            })
+        });
+
+        fetch('/api/data').then((res) => res.json()).then((data) => console.log(data))
         if (email === "" || password === "") {
             setError("Please fill all the fields")
         } else {
             setError("")
-            navigate("/available")
         }
     }
 

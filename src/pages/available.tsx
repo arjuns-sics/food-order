@@ -1,44 +1,17 @@
 //page that shows all the available dishes
 import { useEffect, useState } from "react"
-
-interface Data {
-    recipes: Recipe[]
-    total: number
-    skip: number
-    limit: number
-}
-
-interface Recipe {
-    id: number
-    name: string
-    ingredients: string[]
-    instructions: string[]
-    prepTimeMinutes: number
-    cookTimeMinutes: number
-    servings: number
-    difficulty: string
-    cuisine: string
-    caloriesPerServing: number
-    tags: string[]
-    userId: number
-    image: string
-    rating: number
-    reviewCount: number
-    mealType: string[]
-}
+import type { Menu } from "../../models/menu"
 
 const Available = () => {
-    const [data, setData] = useState<Data | null>(null)
+    const [data, setData] = useState<Menu[] | null>(null)
     const [caloriesFilter, setCaloriesFilter] = useState<number>(100000)
     const [searchQuery, setSearchQuery] = useState<string>("")
     useEffect(() => {
-        fetch(`https://dummyjson.com/recipes/search?q=${searchQuery}`)
+        fetch(`/api/menu`)
             .then(res => res.json())
             .then(data => setData(data))
     }, [searchQuery])
     console.log(data)
-
-    const filteredData = data?.recipes.filter(recipe => recipe.caloriesPerServing <= caloriesFilter)
 
     const debouncedSetSearchQuery = debounce(setSearchQuery, 500);
 
@@ -80,14 +53,14 @@ const Available = () => {
                         </div>
                     </div>
                     <div className="popular-list grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                        {filteredData?.map(recipe => (
+                        {data?.map(recipe => (
                             <div key={recipe.id} className="popular-item bg-white rounded-lg shadow-lg overflow-hidden">
                                 <img src={recipe.image} alt={recipe.name} className="w-full h-64 object-cover" />
                                 <div className="popular-item-content p-4">
                                     <h3 className="text-xl font-semibold">{recipe.name}</h3>
-                                    <p className="text-gray-500 mt-2"> {recipe.servings} servings</p>
+                                    <p className="text-gray-500 mt-2"> {recipe.description}</p>
                                     <div className="popular-item-info flex justify-between items-center mt-4">
-                                        <span className="text-xl font-semibold">₹{Math.floor(recipe.caloriesPerServing * (recipe.difficulty === "Easy" ? 1 : 2) / recipe.servings)}</span>
+                                        <span className="text-xl font-semibold">₹{Math.round(recipe.price * 100)/10}</span>
                                     </div>
                                 </div>
                             </div>

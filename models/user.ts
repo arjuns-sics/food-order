@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { extendZod, zodSchema } from "@zodyac/zod-mongoose";
 import { db } from "../driver/db";
+import { CartModel } from "./cart";
 extendZod(z);
 
-const zUser = z.object({
+export const zUser = z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string(),
@@ -12,9 +13,16 @@ const zUser = z.object({
 
 export type User = z.infer<typeof zUser>;
 
-const schema = zodSchema(zUser,{
+const schema = zodSchema(zUser, {
     validateBeforeSave: true
 });
+
+schema.virtual("cart", {
+    ref: "Cart",
+    localField: "_id",
+    foreignField: "userId"
+})
+
 schema.set("toJSON", {
     transform: (doc, ret) => {
         delete ret.password;
